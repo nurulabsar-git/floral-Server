@@ -2,6 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
+const filesUpload = require('express-fileupload');
+const fs = require("fs-extra");
 require('dotenv').config()
 
 /*Use this site key in the HTML code your site serves to users.
@@ -17,6 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cors());
+app.use(filesUpload())
 
 // console.log(process.env.DB_USER, process.env.DB_PASS, process.env.DB_NAME);
 // `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-shard-00-00.b9ncf.mongodb.net:27017,cluster0-shard-00-01.b9ncf.mongodb.net:27017,cluster0-shard-00-02.b9ncf.mongodb.net:27017/${process.env.DB_NAME}?ssl=true&replicaSet=atlas-d3k6d4-shard-0&authSource=admin&retryWrites=true&w=majority`;
@@ -25,6 +28,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   console.log("error:", err);
   const collection = client.db("foodsName").collection("foods");
+  const vegetableConnection = client.db("foodsName").collection("vegetable");
   console.log("database connected successfully");
 
 
@@ -45,6 +49,40 @@ app.get('/get', (req, res) => {
   });
 })
 
+//
+
+app.post('/addItem', (req, res) => {
+
+  const name = req.body.name;
+  const file = req.files.image;
+  const weight = req.body.weight;
+  const price = req.body.price;
+  const details = req.body.details;
+  const filePath = `${__dirname}/reviews/${file.name}`;
+  const newImg = file.data;
+  const convertedImg = newImg.toString('base64')
+
+
+  const image = {
+    contentType: file.mimetype,
+    size: file.size,
+    img: Buffer.from(convertedImg, "base64"),
+  }
+
+   vegetableConnection.insertOne({name, image, weight, price, details})
+   .then(result => {
+     res.send(result.insertedCount > 0)
+   });
+})
+
+app.get("/services", (req, res) => {
+ vegetableConnection.find({}).toArray((err, documents) => {
+    res.send(documents);
+  });
+});
+
+
+
 });
 
 
@@ -56,5 +94,9 @@ app.listen(process.env.PORT || 5000, ()=> {
   console.log('http://localhost:5000/');
 })
 
-// #bangladesh1160Rif@t##R# 
+
+
+
+
+// #bangladesh1160Rif@t##R# <<<heroku
 
