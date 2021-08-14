@@ -95,8 +95,8 @@ app.listen(process.env.PORT || 5000, ()=> {
 })
 
 
-
-
+// b@ngladesh1160Abs@r##NMR << Oracle for java jdk 
+// 01b@ngladesh1160Abs@r##NM10R << UPeapole
 
 // #bangladesh1160Rif@t##R# <<<heroku
 
