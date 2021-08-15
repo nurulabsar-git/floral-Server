@@ -1,9 +1,8 @@
 // external modules
 const express = require('express');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const filesUpload = require('express-fileupload');
-const fs = require("fs-extra");
 require('dotenv').config()
 
 /*Use this site key in the HTML code your site serves to users.
@@ -31,6 +30,7 @@ client.connect(err => {
   const vegetableConnection = client.db("foodsName").collection("vegetable");
   console.log("database connected successfully");
 
+/* start collection */
 
 app.post('/post', (req, res) => {
 const postData = req.body;
@@ -49,7 +49,10 @@ app.get('/get', (req, res) => {
   });
 })
 
-//
+/* End collection */
+/* Start vegetable collection */
+
+
 
 app.post('/addItem', (req, res) => {
 
@@ -58,7 +61,6 @@ app.post('/addItem', (req, res) => {
   const weight = req.body.weight;
   const price = req.body.price;
   const details = req.body.details;
-  const filePath = `${__dirname}/reviews/${file.name}`;
   const newImg = file.data;
   const convertedImg = newImg.toString('base64')
 
@@ -68,18 +70,36 @@ app.post('/addItem', (req, res) => {
     size: file.size,
     img: Buffer.from(convertedImg, "base64"),
   }
-
+   console.log(image, name);
    vegetableConnection.insertOne({name, image, weight, price, details})
    .then(result => {
      res.send(result.insertedCount > 0)
    });
 })
 
+
+
 app.get("/services", (req, res) => {
  vegetableConnection.find({}).toArray((err, documents) => {
     res.send(documents);
   });
 });
+
+app.get("/services/:id", (req, res) => {
+  const id = ObjectId(req.params.id)
+  vegetableConnection.find({_id: id}).toArray((err, item) => {
+    res.send(item[0])
+  })
+})
+
+/* End vegetable collection */
+
+
+
+
+
+
+
 
 
 
@@ -95,8 +115,4 @@ app.listen(process.env.PORT || 5000, ()=> {
 })
 
 
-// b@ngladesh1160Abs@r##NMR << Oracle for java jdk 
-// 01b@ngladesh1160Abs@r##NM10R << UPeapole
-
-// #bangladesh1160Rif@t##R# <<<heroku
 
