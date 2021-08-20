@@ -94,16 +94,8 @@ app.get("/services/:id", (req, res) => {
 
 /* End vegetable collection */
 
-
-
-
-
-
-
-
-
-
 });
+
 
 
 app.get('/', (req, res) => {
@@ -113,6 +105,5 @@ app.get('/', (req, res) => {
 app.listen(process.env.PORT || 5000, ()=> {
   console.log('http://localhost:5000/');
 })
-
 
 
